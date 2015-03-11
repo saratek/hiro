@@ -261,3 +261,93 @@ reponseP4.traitement.push(P4T2);
 
 
 //------------------------------------------------------------------------------------------------------------
+
+exports.P3 = function(doc){
+    console.log("envoie de donnée");
+    doc(reponseP3);
+}
+
+var reponseP3 = {};
+reponseP3.dbEntree = "api";
+reponseP3.dbSortie = "article";
+reponseP3.traitement = [];
+
+P3T1=  "var util = require('util');"+
+"var https = require('https');"+
+"var  EventEmitter = require('events').EventEmitter;"+
+"var event = new EventEmitter();"+
+"var date = {};"+
+"event.on('fin', function(){" +
+    "console.log('emission d evenement !!!!!!!!!!!!!!!!!!!!');"+
+    "process.send(@ARemplacer);"+
+"});"+
+"date.aujourdui = new Date();"+
+" API = function (){"+
+"this.nom = @ARemplacer.nom;"+
+"this.url = @ARemplacer.url;;" +
+"};"+
+
+"var start = function (){"+
+"var api = new API();"+
+"api.test();"+
+"};"+
+
+"API.prototype = {"+
+
+"test : function () {"+
+    "var b = '';"+
+    "util.log('-------------------Recuperation des articles, source : '+@ARemplacer.nom +' --------------');"+
+    "var _this = this;"+
+    "https.get(this.url, function (r) {"+
+    "var __this = _this;"+
+        "r.on('data', function (d) {"+
+    "var ___this = __this;"+
+           "b += d;"+
+        "});"+
+        "r.on('end', function () {"+
+      "var ____this = __this;"+
+            "b = JSON.parse(b);"+
+            "if (b.query.results) {"+
+                "____this = b;"+
+                "@ARemplacer=____this;"+
+                 "console.log('____________________________________________________________1');"+
+            "}"+
+            "event.emit('fin');"+
+        "});"+
+   " });"+
+
+"}"+
+
+"};"+
+
+"start();"
+
+P3T2 = "var  EventEmitter = require('events').EventEmitter;"+
+"var event = new EventEmitter();"+
+"event.on('fin', function(){" +
+"console.log('emission d evenement !!!!!!!!!!!!!!!!!!!!');"+
+"process.send(@ARemplacer);"+
+"});"+
+    "miseEnForme = function () {"+
+   "flux = @ARemplacer;"+
+   "var articles = [];"+
+    "if(flux.query && flux.query.results && flux.query.results.item){"+
+        "for (i in flux.query.results.item) {"+
+            "var tmp = {};"+
+            "tmp.provenance = flux.query.diagnostics.url.content;"+
+            "tmp.titre = flux.query.results.item[i].title;"+
+            "tmp.date = new Date(flux.query.results.item[i].pubDate);"+
+            "tmp.description = flux.query.results.item[i].description;"+
+            "tmp.image = flux.query.results.item[i].enclosure;"+
+            "tmp.lien = flux.query.results.item[i].link;"+
+            "articles[i] = tmp;"+
+        "}"+
+    "}"+
+"@ARemplacer = articles;"+
+"event.emit('fin');"+
+"};"+
+
+"miseEnForme();"
+//eval(P3T1);
+reponseP3.traitement.push(P3T1);
+reponseP3.traitement.push(P3T2);

@@ -34,6 +34,8 @@ post.prototype = {
                 send.P2(this.cb);
             } else if(data.code == "P4T"){
                 send.P4(this.cb);
+            } else if(data.code == "P3T"){
+                send.P3(this.cb);
             }else{
                 console.log("erreur");
             }

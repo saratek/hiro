@@ -5,10 +5,13 @@ exports.P2 = function(doc){
 }
 
 var reponseP2 = {};
-reponseP2.db = "twitter";
+reponseP2.dbEntree = "twitter";
+reponseP2.dbSortie = "twitter";
 reponseP2.traitement = [];
 
 T1= "var db = require('./twitter');"+
+"var  EventEmitter = require('events').EventEmitter;"+
+"var event = new EventEmitter();"+
 " var date = {};"+
 "date.heure = 70000;"+
 "var traitement = {};"+
@@ -42,11 +45,17 @@ T1= "var db = require('./twitter');"+
 "}"+
 "traitement.motDuTT = traitement.mots;"+
 "@ARemplacer = traitement;"+
+"event.on('fin', function(){" +
+"process.send(@ARemplacer);"+
+"});"+
+"event.emit('fin');"+
 "};"+
 
 "traitement.start();"
 
-T2 ="trouverPoid = function () {"+
+T2 ="var  EventEmitter = require('events').EventEmitter;"+
+"var event = new EventEmitter();"+
+"trouverPoid = function () {"+
 "var traitement  = @ARemplacer;"+
 "var tabMot = traitement.motDuTT;"+
 "var indice = 1;"+
@@ -74,12 +83,18 @@ T2 ="trouverPoid = function () {"+
 "}"+
 "traitement.tabJsonMotPoids= jsonMotPoids;"+
 "@ARemplacer = traitement;"+
+"event.on('fin', function(){" +
+"process.send(@ARemplacer);"+
+"});"+
+"event.emit('fin');"+
 "};"+
 
 "trouverPoid();"
 
 //Ajoute plus de poids au mots avec un "#"
 T3 ="var db = require('./twitter');"+
+"var  EventEmitter = require('events').EventEmitter;"+
+"var event = new EventEmitter();"+
 "hashtage = function () {"+
 "var traitement = @ARemplacer;"+
 "var jsonMotPoids = traitement.tabJsonMotPoids;"+
@@ -99,6 +114,10 @@ T3 ="var db = require('./twitter');"+
 "}"+
 "traitement.TT.motsClefs = traitement.NewTabJsonMotPoids;"+
 "@ARemplacer = traitement;"+
+"event.on('fin', function(){" +
+"process.send(@ARemplacer);"+
+"});"+
+"event.emit('fin');"+
 "};"+
 
 //Enleve les caractères spéciaux et les mets en "bonne forme" pour la base
@@ -124,9 +143,7 @@ T3 ="var db = require('./twitter');"+
 reponseP2.traitement.push(T1);
 reponseP2.traitement.push(T2);
 reponseP2.traitement.push(T3);
-//setInterval(function () {
-//eval(reponse.T1);
-//}, date.heure);
+
 //------------------------------------------------------------------------------------------------------------
 exports.P4 = function(doc){
     console.log("envoie de donnée");
@@ -134,53 +151,82 @@ exports.P4 = function(doc){
 }
 
 var reponseP4 = {};
-reponseP4.db1 = "twitter";
-reponseP4.db2 = "article";
+reponseP4.dbEntree = "twitter";
+reponseP4.dbSortie = "tweetsArticles";
 reponseP4.traitement = [];
 
 P4T1= "var articles = require('./article');"+
-"var traitements = {};"+
-"traitements.tweetsArticles = {};"+
+"var  EventEmitter = require('events').EventEmitter;"+
+"var event = new EventEmitter();"+
+" trait = function (){"+
+"this.TT = @ARemplacer;"+
+"this.articlesTab = [];" +
+"this.tweetsArticles = {}"+
+"};"+
 
-"start = function (){"+
-"traitements =  @ARemplacer;"+
-   " var tabArticle = [];"+
-    'var stringTabArticle = "";'+
+
+"var start = function (){"+
+"var traitements = new trait();"+
+"traitements.test();"+
+"};"+
+
+"trait.prototype = {"+
+
+" test : function(){"+
+
+    "var tabArticles = [];"+
+    "_this = this;"+
+
     "articles.trouverTout(function (article) {"+
-        "for (i in article) {"+
-            "tabArticle[i] = article[i];"+
-            "tabArticle[i] = JSON.stringify(tabArticle[i]);"+
-        "}"+
-        "traitements.tabArticle = tabArticle;"+
-        "@ARemplacer = traitements;"+
-
+     "for (i in article) {"+
+         "tabArticles[i] = article[i];"+
+         "tabArticles[i] = JSON.stringify(tabArticles[i]);"+
+     "}"+
+    "_this.articlesTab = tabArticles;"+
+    "@ARemplacer = _this;"+
+    "event.on('fin', function(){" +
+        "console.log('emission d evenement !!!!!!!!!!!!!!!!!!!!');"+
+        "process.send(@ARemplacer);"+
     "});"+
-    //traitements.preMatching(twitter, tabArticle);
+    "event.emit('fin');"+
+"});"+
+
+"}"+
+
 "};"+
 
 "start();"
+
 //Enregistrement en base apres le traitement de matching
 
-P4T2= "preMatching = function () {"+
-        "trend =  @ARemplacer;"+
-        "trend.tweetsArticles = {};"+
-    "tabArticle = trend.tabArticle;"+
+P4T2= "var articles = require('./article');"+
+"var  EventEmitter = require('events').EventEmitter;"+
+"var event = new EventEmitter();"+
+
+"event.on('fin', function(){" +
+   "console.log('emission d evenement !!!!!!!!!!!!!!!!!!!!');"+
+    "process.send(@ARemplacer);"+
+"});"+
+    "preMatching = function () {"+
+      "var trend =  @ARemplacer.TT;"+
+      "var tweetsArticles = {};"+
+    "var tabArticle = @ARemplacer.articlesTab;"+
     "var tabBonArticles = [];"+
 
     "for (i in tabArticle) {"+
         "matching(trend, tabArticle[i], tabBonArticles);"+
     "}"+
-    "trend.tweetsArticles.nom = trend.name;"+
-    "trend.tweetsArticles.tweets = trend.tabTweets;"+
-    "trend.tweetsArticles.formate = trend.formate;"+
-    "trend.tweetsArticles.date = trend.date;"+
+    "tweetsArticles.nom = trend.name;"+
+    "tweetsArticles.tweets = trend.tabTweets;"+
+    "tweetsArticles.formate = trend.formate;"+
+    "tweetsArticles.date = trend.date;"+
     // todo ajouter l'image
     "if (tabBonArticles.length != 0) {"+
     "console.log('<<<<<<<<<<<<<<<<<mashing<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<');"+
-     "console.log(trend);"+
-        "trend.tweetsArticles.tabArticles = tabBonArticles;"+
-        "@ARemplacer = trend.tweetsArticles;"+
+        "tweetsArticles.tabArticles = tabBonArticles;"+
+        "@ARemplacer = tweetsArticles;"+
     "}"+
+"event.emit('fin');"+
 "};"+
 
 //Fonction de matching, fait par trend. (en parrallèle )
@@ -212,3 +258,6 @@ P4T2= "preMatching = function () {"+
 
 reponseP4.traitement.push(P4T1);
 reponseP4.traitement.push(P4T2);
+
+
+//------------------------------------------------------------------------------------------------------------

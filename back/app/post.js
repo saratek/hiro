@@ -31,7 +31,7 @@ post.prototype = {
     route :
         function (data) {
             if (data.code == "P2T") {
-                send.P1(this.cb);
+                send.P2(this.cb);
             } else if(data.code == "P4T"){
                 send.P4(this.cb);
             }else{

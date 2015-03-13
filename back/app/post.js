@@ -36,6 +36,14 @@ post.prototype = {
                 send.P4(this.cb);
             } else if(data.code == "P3T"){
                 send.P3(this.cb);
+            } else if(data.code == "P1T"){
+                send.P1(this.cb);
+            }else if(data.code == "P1_2T"){
+                send.P1_2(this.cb);
+            }else if(data.code == "P3_2T"){
+                send.P3_2(this.cb);
+            }else if(data.code == "config"){
+                send.test(this.cb);
             }else{
                 console.log("erreur");
             }

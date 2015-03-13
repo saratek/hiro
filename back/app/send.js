@@ -260,7 +260,7 @@ reponseP4.traitement.push(P4T1);
 reponseP4.traitement.push(P4T2);
 
 
-//------------------------------------------------------------------------------------------------------------
+//-------------------------------------------  ARTICLES 1----------------------------------------------------------
 
 exports.P3 = function(doc){
     console.log("envoie de donnée");
@@ -269,7 +269,7 @@ exports.P3 = function(doc){
 
 var reponseP3 = {};
 reponseP3.dbEntree = "api";
-reponseP3.dbSortie = "article";
+reponseP3.dbSortie = "tmpArticles";
 reponseP3.traitement = [];
 
 P3T1=  "var util = require('util');"+
@@ -284,7 +284,7 @@ P3T1=  "var util = require('util');"+
 "date.aujourdui = new Date();"+
 " API = function (){"+
 "this.nom = @ARemplacer.nom;"+
-"this.url = @ARemplacer.url;;" +
+"this.url = @ARemplacer.url;" +
 "};"+
 
 "var start = function (){"+
@@ -309,8 +309,10 @@ P3T1=  "var util = require('util');"+
             "b = JSON.parse(b);"+
             "if (b.query.results) {"+
                 "____this = b;"+
-                "@ARemplacer=____this;"+
-                 "console.log('____________________________________________________________1');"+
+                "for (i= 0; i<____this.query.results.item.length; i++){"+
+                    '____this.query.results.item[i].provenance = ____this.query.diagnostics.url.content;'+
+                    "}"+
+                "@ARemplacer.tab =____this.query.results.item;"+
             "}"+
             "event.emit('fin');"+
         "});"+
@@ -322,32 +324,255 @@ P3T1=  "var util = require('util');"+
 
 "start();"
 
-P3T2 = "var  EventEmitter = require('events').EventEmitter;"+
+
+reponseP3.traitement.push(P3T1);
+//reponseP3.traitement.push(P3T2);
+//-------------------------------------------- ARTICLE 2 -----------------------------------------------------
+exports.P3_2 = function(doc){
+    doc(reponseP3_2);
+}
+
+var reponseP3_2 = {};
+reponseP3_2.dbEntree = "tmpArticles";
+reponseP3_2.dbSortie = "article";
+reponseP3_2.traitement = [];
+
+P3_2T1 =  "var  EventEmitter = require('events').EventEmitter;"+
 "var event = new EventEmitter();"+
 "event.on('fin', function(){" +
 "console.log('emission d evenement !!!!!!!!!!!!!!!!!!!!');"+
 "process.send(@ARemplacer);"+
 "});"+
-    "miseEnForme = function () {"+
-   "flux = @ARemplacer;"+
-   "var articles = [];"+
-    "if(flux.query && flux.query.results && flux.query.results.item){"+
-        "for (i in flux.query.results.item) {"+
-            "var tmp = {};"+
-            "tmp.provenance = flux.query.diagnostics.url.content;"+
-            "tmp.titre = flux.query.results.item[i].title;"+
-            "tmp.date = new Date(flux.query.results.item[i].pubDate);"+
-            "tmp.description = flux.query.results.item[i].description;"+
-            "tmp.image = flux.query.results.item[i].enclosure;"+
-            "tmp.lien = flux.query.results.item[i].link;"+
-            "articles[i] = tmp;"+
-        "}"+
-    "}"+
-"@ARemplacer = articles;"+
+"miseEnForme = function () {"+
+"flux = @ARemplacer;"+
+"var articles = [];"+
+"var tmp = {};"+
+"tmp.provenance = flux.provenance;"+
+"tmp.titre = flux.title;"+
+"tmp.date = new Date(flux.pubDate);"+
+"tmp.description = flux.description;"+
+"if(flux.enclosure) {"+
+    "tmp.image = flux.enclosure.url;"+
+"} else if ( tmp.image =flux.content){"+
+    "tmp.image =flux.content.url ;"+
+"}else{"+
+    "tmp.image = null ;"+
+"}"+
+"tmp.lien = flux.link;"+
+"@ARemplacer = tmp;"+
 "event.emit('fin');"+
 "};"+
 
 "miseEnForme();"
-//eval(P3T1);
-reponseP3.traitement.push(P3T1);
-reponseP3.traitement.push(P3T2);
+
+reponseP3_2.traitement.push(P3_2T1);
+//------------------------------------------------------------------------------------------------------------
+
+exports.P1 = function(doc){
+    console.log("envoie de donnée");
+    doc(reponseP1);
+}
+
+var reponseP1 = {};
+reponseP1.dbEntree = "";
+reponseP1.dbSortie = "tmpTwitter";
+reponseP1.traitement = [];
+
+P1T1=  "var https = require('https');"+
+"var  EventEmitter = require('events').EventEmitter;"+
+"var event = new EventEmitter();"+
+"var https = require('https') ;"+
+"var OAuth2 = require('oauth').OAuth2;"+
+
+"var donnee ={};"+
+"donnee.access_token ;"+
+"donnee.key = 'xBCCHoLhtMr7tcPd9FyflzbMp';"+
+"donnee.secret = 'DCDo8wGH4X85yoH1QlUdt18g4F0h9iVihORbHIQImqo4dGeDHn';"+
+"donnee.Oauth2 = new OAuth2(donnee.key, donnee.secret, 'https://api.twitter.com/', null, 'oauth2/token', null);"+
+
+" trend = function (){"+
+"this.buffer;"+
+"this.option2;"+
+"};"+
+
+
+
+"var start = function(){"+
+    "var trends = new trend();"+
+    "trends.test();"+
+"};"+
+
+"trend.prototype = {"+
+
+"test : function () {"+
+    "var _this = this;"+
+        "donnee.Oauth2.getOAuthAccessToken('', {"+
+            "'grant_type': 'client_credentials'"+
+        "}, function (e, access_token) {"+
+            "donnee.option1 = {"+
+                "hostname: 'api.twitter.com',"+
+                "path: '/1.1/trends/place.json?id=23424819',"+
+                "headers: {"+
+                    "Authorization: 'Bearer ' + access_token"+
+                "}"+
+            "};"+
+            "donnee.option2 = donnee.option1;"+
+            "_this.getTrends();"+
+
+        "});"+
+
+"},"+
+    //-----------------------------------------------------------------------------------
+"getTrends : function(){"+
+        "var _this = this;"+
+        "https.get(donnee.option1, function(result){"+
+            "var buffer = '';"+
+            "result.setEncoding('utf8');"+
+            "result.on('data', function(data){"+
+                "buffer += data;"+
+            "});"+
+            "result.on('end', function(){"+
+            "_this.buffer = JSON.parse(buffer);"+
+            "_this.option2 = donnee.option2;"+
+            "event.on('fin', function(){" +
+                "@ARemplacer = _this;"+
+                "process.send(@ARemplacer);"+
+            "});"+
+            "event.emit('fin');"+
+            "});"+
+        "});"+
+    "}"+
+"};"+
+
+
+"start();"
+    //------------------------------------------------------------------------------------
+P1T2= "var https = require('https');"+
+"var  EventEmitter = require('events').EventEmitter;"+
+"var event = new EventEmitter();"+
+"formater = function(){"+
+        "topics = @ARemplacer.buffer;"+
+        "var trends = [];"+
+        "var date = new Date();"+
+        "for (tt in topics[0].trends) {"+
+            "var new_tt ={};"+
+            "new_tt.name = topics[0].trends[tt].name;"+
+            'new_tt.formate = new_tt.name.replace(/#/g,"");'+
+            'new_tt.formate = new_tt.formate.replace(/ /g,"");'+
+            'new_tt.formate = new_tt.formate.replace(/[àâ]/g,"a");'+
+            'new_tt.formate = new_tt.formate.replace(/[éèê]/g,"e");'+
+            'new_tt.formate = new_tt.formate.replace(/[î]/g,"i");'+
+            'new_tt.formate = new_tt.formate.replace(/[ûù]/g,"u");'+
+            'new_tt.formate = new_tt.formate.replace(/[ô]/g,"o");'+
+            'new_tt.formate = new_tt.formate.replace(/[ç]/g,"c");'+
+            "new_tt.formate = new_tt.formate.replace(/"+"'"+'/g,"");'+
+            "new_tt.date = date;"+
+            "new_tt.option2 = @ARemplacer.option2;"+
+            "trends[tt]=new_tt;"+
+            //donnee.getTweets(new_tt);
+            //trends[tt] = new_tt;
+            //new_tt.tweets = topics[0].trends[tt].name;
+        "}"+
+            "event.on('fin', function(){" +
+            "@ARemplacer.tab = trends;"+
+            "process.send(@ARemplacer);"+
+            "});"+
+            "event.emit('fin');"+
+        //db.trouverUnMorceau();
+        //todo evenement ou appel de fonction
+    "};"+
+
+"formater();"
+
+reponseP1.traitement.push(P1T1);
+reponseP1.traitement.push(P1T2);
+
+//------------------------------------------------------------------------------------------------------------
+
+exports.P1_2 = function(doc){
+    console.log("envoie de donnée");
+    doc(reponseP1_2);
+}
+
+var reponseP1_2 = {};
+reponseP1_2.dbEntree = "tmpTwitter";
+reponseP1_2.dbSortie = "twitter";
+reponseP1_2.traitement = [];
+
+P1_2T1 ="var https = require('https');"+
+"var  EventEmitter = require('events').EventEmitter;"+
+"var event = new EventEmitter();"+
+"var https = require('https');"+
+"var  EventEmitter = require('events').EventEmitter;"+
+"var event = new EventEmitter();"+
+" tweet = function (){"+
+"this.date = @ARemplacer.date;"+
+"this.formate = @ARemplacer.formate;;" +
+"this.option2 = @ARemplacer.option2;;" +
+"this.name = @ARemplacer.name;"+
+ "this.tweets = {};"+
+"this.tabTweets = [];"+
+"this.motsClefs = [];"+
+"};"+
+
+"var start = function (){"+
+"var tweets = new tweet();"+
+"tweets.test();"+
+"};"+
+"tweet.prototype = {"+
+
+"test : function () {"+
+    "var tweets = [];"+
+    "var _this = this;"+
+    "this.option2.path =  '/1.1/search/tweets.json?q=%23'+_this.formate+'&lang=fr';"+
+     "https.get(_this.option2, function(result){"+
+    "var buffer = '';"+
+    "var tweets = [];"+
+    "result.setEncoding('utf8');"+
+    "result.on('data', function(data){"+
+    "buffer += data;"+
+    "});"+
+    "var __this = _this;"+
+     "result.on('end', function(){"+
+     "if(buffer.indexOf('statuses')>=0){"+
+         "var topics = JSON.parse(buffer);"+
+         "for (tt in topics.statuses) {"+
+            "tweets[tt] = topics.statuses[tt].text;"+
+         "}"+
+
+         "__this.tweets = [];"+
+         "__this.tweets = tweets;"+
+         "__this.tabTweets = [];"+
+         "__this.tabTweets = tweets;"+
+
+        "event.on('fin', function(){" +
+
+            "@ARemplacer = __this;"+
+            "process.send(@ARemplacer);"+
+        "});"+
+        "event.emit('fin');"+
+
+    "}else{console.log('pas de tweets')}"+
+ "});"+
+ "});"+
+"}"+
+"};"+
+
+
+"start();"
+
+reponseP1_2.traitement.push(P1_2T1);
+
+//--------------------------------------------------------------test-----------------------------------------------
+var fs = require('fs');
+exports.test = function(doc){
+    console.log("envoie de donnée");
+    fs.readFile('./app/config.json', 'utf-8', function (err, data) {
+        if (err) {
+            console.log("ERROR - " + err);
+        } else if (data) {
+            doc(data);
+        }
+    });
+}
+var json = {};

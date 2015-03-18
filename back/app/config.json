@@ -1,7 +1,7 @@
 {
   "name": "HIRO",
   "version": "2.0",
-  "recuperation" : {"code" : ["R1T","R2T"]},
-  "frequence" : {"fq" : [60000, 60000]},
-  "traitement": [["P1","P2"], ["P3"]]
+  "recuperation" : ["R1T","P1T","P2T","R2T","R3T","P3T"],
+  "frequence" : [1000, 2000],
+  "traitement": [[""]]
 }

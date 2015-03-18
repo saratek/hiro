@@ -30,22 +30,23 @@ post.prototype = {
         },
     route :
         function (data) {
-            if (data.code == "P2T") {
+            if (data.code == "P2T") {//done!
                 send.P2(this.cb);
-            } else if(data.code == "P4T"){
-                send.P4(this.cb);
-            } else if(data.code == "P3T"){
-                send.P3(this.cb);
-            } else if(data.code == "P1T"){
+            }else if(data.code == "R2T"){//done!
+                send.R2(this.cb);
+            } else if(data.code == "R1T"){//done!
+                send.R1(this.cb);
+            }else if(data.code == "R3T"){//done!
+                send.R3(this.cb);
+            }else if(data.code == "P1T"){//done!
                 send.P1(this.cb);
-            }else if(data.code == "P1_2T"){
-                send.P1_2(this.cb);
-            }else if(data.code == "P3_2T"){
-                send.P3_2(this.cb);
+            }else if(data.code == "P3T"){ //done!
+                send.P3(this.cb);
             }else if(data.code == "config"){
                 send.test(this.cb);
             }else{
                 console.log("erreur");
+                console.log(data.code);
             }
         },
 

@@ -1,6 +1,6 @@
 
 exports.P2 = function(doc){
-    console.log("envoie de donnée");
+    console.log("envoie de donnée P2");
     doc(reponseP2);
 }
 
@@ -29,11 +29,11 @@ T1= "var db = require('./twitter');"+
 
 "traitement.recupTweets = function () {"+
 "traitement.TT =  @ARemplacer;"+
-"traitement.trouverMotClef(traitement);"+
-
+"trouverMotClef(traitement);"+
 "};"+
 
-"traitement.trouverMotClef = function (traitement) {"+
+"trouverMotClef = function (traitement) {"+
+    "if(traitement.TT.tweets){"+
 'var motsTweet = traitement.TT.tweets.replace(/,/g," ");'+
 "motsTweet = motsTweet.split(' ');"+
 "traitement.mots = [];"+
@@ -44,6 +44,8 @@ T1= "var db = require('./twitter');"+
 "}"+
 "}"+
 "traitement.motDuTT = traitement.mots;"+
+"}"+
+
 "@ARemplacer = traitement;"+
 "event.on('fin', function(){" +
 "process.send(@ARemplacer);"+
@@ -113,7 +115,7 @@ T3 ="var db = require('./twitter');"+
 "}"+
 "}"+
 "traitement.TT.motsClefs = traitement.NewTabJsonMotPoids;"+
-"@ARemplacer = traitement;"+
+"@ARemplacer = traitement.TT;"+
 "event.on('fin', function(){" +
 "process.send(@ARemplacer);"+
 "});"+
@@ -145,17 +147,17 @@ reponseP2.traitement.push(T2);
 reponseP2.traitement.push(T3);
 
 //------------------------------------------------------------------------------------------------------------
-exports.P4 = function(doc){
-    console.log("envoie de donnée");
-    doc(reponseP4);
+exports.P3 = function(doc){
+    console.log("envoie de donnée P3");
+    doc(reponseP3);
 }
 
-var reponseP4 = {};
-reponseP4.dbEntree = "twitter";
-reponseP4.dbSortie = "tweetsArticles";
-reponseP4.traitement = [];
+var reponseP3 = {};
+reponseP3.dbEntree = "twitter";
+reponseP3.dbSortie = "tweetsArticles";
+reponseP3.traitement = [];
 
-P4T1= "var articles = require('./article');"+
+P3T1= "var articles = require('./article');"+
 "var  EventEmitter = require('events').EventEmitter;"+
 "var event = new EventEmitter();"+
 " trait = function (){"+
@@ -185,7 +187,6 @@ P4T1= "var articles = require('./article');"+
     "_this.articlesTab = tabArticles;"+
     "@ARemplacer = _this;"+
     "event.on('fin', function(){" +
-        "console.log('emission d evenement !!!!!!!!!!!!!!!!!!!!');"+
         "process.send(@ARemplacer);"+
     "});"+
     "event.emit('fin');"+
@@ -199,12 +200,11 @@ P4T1= "var articles = require('./article');"+
 
 //Enregistrement en base apres le traitement de matching
 
-P4T2= "var articles = require('./article');"+
+P3T2= "var articles = require('./article');"+
 "var  EventEmitter = require('events').EventEmitter;"+
 "var event = new EventEmitter();"+
 
 "event.on('fin', function(){" +
-   "console.log('emission d evenement !!!!!!!!!!!!!!!!!!!!');"+
     "process.send(@ARemplacer);"+
 "});"+
     "preMatching = function () {"+
@@ -256,29 +256,28 @@ P4T2= "var articles = require('./article');"+
 "};"+
 "preMatching();"
 
-reponseP4.traitement.push(P4T1);
-reponseP4.traitement.push(P4T2);
+reponseP3.traitement.push(P3T1);
+reponseP3.traitement.push(P3T2);
 
 
 //-------------------------------------------  ARTICLES 1----------------------------------------------------------
 
-exports.P3 = function(doc){
-    console.log("envoie de donnée");
-    doc(reponseP3);
+exports.R2 = function(doc){
+    console.log("envoie de donnée  R2");
+    doc(reponseR2);
 }
 
-var reponseP3 = {};
-reponseP3.dbEntree = "api";
-reponseP3.dbSortie = "tmpArticles";
-reponseP3.traitement = [];
+var reponseR2 = {};
+reponseR2.dbEntree = "api";
+reponseR2.dbSortie = "tmpArticles";
+reponseR2.traitement = [];
 
-P3T1=  "var util = require('util');"+
+R2T1=  "var util = require('util');"+
 "var https = require('https');"+
 "var  EventEmitter = require('events').EventEmitter;"+
 "var event = new EventEmitter();"+
 "var date = {};"+
 "event.on('fin', function(){" +
-    "console.log('emission d evenement !!!!!!!!!!!!!!!!!!!!');"+
     "process.send(@ARemplacer);"+
 "});"+
 "date.aujourdui = new Date();"+
@@ -325,22 +324,21 @@ P3T1=  "var util = require('util');"+
 "start();"
 
 
-reponseP3.traitement.push(P3T1);
-//reponseP3.traitement.push(P3T2);
+reponseR2.traitement.push(R2T1);
 //-------------------------------------------- ARTICLE 2 -----------------------------------------------------
-exports.P3_2 = function(doc){
-    doc(reponseP3_2);
+
+exports.R3 = function(doc){
+    console.log("envoie de donnée R3");
+    doc(reponseR3);
 }
 
-var reponseP3_2 = {};
-reponseP3_2.dbEntree = "tmpArticles";
-reponseP3_2.dbSortie = "article";
-reponseP3_2.traitement = [];
-
-P3_2T1 =  "var  EventEmitter = require('events').EventEmitter;"+
+var reponseR3 = {};
+reponseR3.dbEntree = "tmpArticles";
+reponseR3.dbSortie = "article";
+reponseR3.traitement = [];
+R3T1 =  "var  EventEmitter = require('events').EventEmitter;"+
 "var event = new EventEmitter();"+
 "event.on('fin', function(){" +
-"console.log('emission d evenement !!!!!!!!!!!!!!!!!!!!');"+
 "process.send(@ARemplacer);"+
 "});"+
 "miseEnForme = function () {"+
@@ -365,20 +363,20 @@ P3_2T1 =  "var  EventEmitter = require('events').EventEmitter;"+
 
 "miseEnForme();"
 
-reponseP3_2.traitement.push(P3_2T1);
+reponseR3.traitement.push(R3T1);
 //------------------------------------------------------------------------------------------------------------
 
-exports.P1 = function(doc){
-    console.log("envoie de donnée");
-    doc(reponseP1);
+exports.R1 = function(doc){
+    console.log("envoie de donnée R1");
+    doc(reponseR1);
 }
 
-var reponseP1 = {};
-reponseP1.dbEntree = "";
-reponseP1.dbSortie = "tmpTwitter";
-reponseP1.traitement = [];
+var reponseR1 = {};
+reponseR1.dbEntree = "";
+reponseR1.dbSortie = "tmpTwitter";
+reponseR1.traitement = [];
 
-P1T1=  "var https = require('https');"+
+R1T1=  "var https = require('https');"+
 "var  EventEmitter = require('events').EventEmitter;"+
 "var event = new EventEmitter();"+
 "var https = require('https') ;"+
@@ -447,7 +445,7 @@ P1T1=  "var https = require('https');"+
 
 "start();"
     //------------------------------------------------------------------------------------
-P1T2= "var https = require('https');"+
+R1T2= "var https = require('https');"+
 "var  EventEmitter = require('events').EventEmitter;"+
 "var event = new EventEmitter();"+
 "formater = function(){"+
@@ -484,27 +482,28 @@ P1T2= "var https = require('https');"+
 
 "formater();"
 
-reponseP1.traitement.push(P1T1);
-reponseP1.traitement.push(P1T2);
+reponseR1.traitement.push(R1T1);
+reponseR1.traitement.push(R1T2);
 
 //------------------------------------------------------------------------------------------------------------
 
-exports.P1_2 = function(doc){
-    console.log("envoie de donnée");
-    doc(reponseP1_2);
+exports.P1 = function(doc){
+    console.log("envoie de donnée P1");
+    doc(reponseP1);
 }
 
-var reponseP1_2 = {};
-reponseP1_2.dbEntree = "tmpTwitter";
-reponseP1_2.dbSortie = "twitter";
-reponseP1_2.traitement = [];
+var reponseP1 = {};
+reponseP1.dbEntree = "tmpTwitter";
+reponseP1.dbSortie = "twitter";
+reponseP1.traitement = [];
 
-P1_2T1 ="var https = require('https');"+
-"var  EventEmitter = require('events').EventEmitter;"+
+P1T1 ="var  EventEmitter = require('events').EventEmitter;"+
 "var event = new EventEmitter();"+
+"event.on('fin', function(){" +
+"process.send(@ARemplacer);"+
+"});"+
+    "var https = require('https');"+
 "var https = require('https');"+
-"var  EventEmitter = require('events').EventEmitter;"+
-"var event = new EventEmitter();"+
 " tweet = function (){"+
 "this.date = @ARemplacer.date;"+
 "this.formate = @ARemplacer.formate;;" +
@@ -539,21 +538,19 @@ P1_2T1 ="var https = require('https');"+
          "for (tt in topics.statuses) {"+
             "tweets[tt] = topics.statuses[tt].text;"+
          "}"+
-
          "__this.tweets = [];"+
          "__this.tweets = tweets;"+
          "__this.tabTweets = [];"+
          "__this.tabTweets = tweets;"+
-
-        "event.on('fin', function(){" +
-
-            "@ARemplacer = __this;"+
-            "process.send(@ARemplacer);"+
-        "});"+
+        "@ARemplacer = __this;"+
         "event.emit('fin');"+
+    "}else{" +
+      "console.log('pas de tweets');" +
+        "event.emit('fin');"+
+    "}"+
 
-    "}else{console.log('pas de tweets')}"+
  "});"+
+
  "});"+
 "}"+
 "};"+
@@ -561,7 +558,7 @@ P1_2T1 ="var https = require('https');"+
 
 "start();"
 
-reponseP1_2.traitement.push(P1_2T1);
+reponseP1.traitement.push(P1T1);
 
 //--------------------------------------------------------------test-----------------------------------------------
 var fs = require('fs');

@@ -348,7 +348,18 @@ R3T1 =  "var  EventEmitter = require('events').EventEmitter;"+
 "tmp.provenance = flux.provenance;"+
 "tmp.titre = flux.title;"+
 "tmp.date = new Date(flux.pubDate);"+
-"tmp.description = flux.description;"+
+
+"var re = /<\/a>(.*)<\/p>/;"+
+"var m;"+
+"var res = flux.description ;"+
+"while ((m = re.exec(res)) != null) {"+
+    "if (m.index === re.lastIndex) {"+
+        "re.lastIndex++;"+
+    "}"+
+"}"+
+"if (m) tmp.description = m[0];"+
+"else tmp.description = res ;"+
+
 "if(flux.enclosure) {"+
     "tmp.image = flux.enclosure.url;"+
 "} else if ( tmp.image =flux.content){"+
